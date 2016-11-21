@@ -1,0 +1,54 @@
+﻿@model WebApplication1.Models.RequestModel
+
+
+
+
+
+
+@using (Html.BeginForm("UserPage", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Оформление заявки</legend>
+
+        <label>Ваш адрес Email</label>
+        <div class="form-group">
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+                       <label>Опишите вашу проблему</label>
+        @Html.TextAreaFor(
+    model => model.Description,
+    new { @class="form-control", style = "width: 400px; height: 200px;" }
+
+)
+        @Html.ValidationMessageFor(model => model.Description)
+        <label>Добавьте изображение</label>
+        <br />
+        
+            <label class="btn btn-primary" id="upload" for="my-file-selector">
+                <input id="my-file-selector" type="file" name="uploadImage" style="display:none;" onchange="$('#upload-file-info').html($(this).val());">
+                Browse
+            </label>
+            <span class='label label-info' id="upload-file-info"></span>
+       
+                
+            <input type="submit" id="save" class="btn btn-info" value="Отправить заявку"  />
+       
+    </fieldset>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
+<SCRIPT LANGUAGE="JavaScript">
+    var edit = document.getElementById("upload");
+    var save = document.getElementById("save");
+
+    edit.onclick = function () {
+        save.style.visibility = "visible";
+
+    }
+</SCRIPT>

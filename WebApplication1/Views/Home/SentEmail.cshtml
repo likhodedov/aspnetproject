@@ -1,0 +1,37 @@
+﻿@model WebApplication1.Models.email
+    
+
+@using (Html.BeginForm("sendemail", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+@Html.TextBoxFor(m => m.text, new { @class = "form-control" })  
+@Html.TextBoxFor(m => m.to, new { @class = "form-control" })
+    <input type="submit" value="Выполнить вход" class="btn btn-default" />
+}
+    @*@if (errorMessage == "")
+    {
+       <br />
+            <legend> Сообщение успешно отправлено.</legend>
+
+
+            <p><b>@customerRequest</b></p>
+    }
+    else
+    {
+        <legend>
+            <p><b>The email was <em>not</em> sent.</b></p>
+            <p>
+                Please check that the code in the ProcessRequest page has
+                correct settings for the SMTP server name, a user name,
+                a password, and a "from" address.
+            </p></legend>
+
+        if (debuggingFlag)
+        {
+            <legend>
+                <p>The following error was reported:</p>
+                <p><em>@errorMessage</em></p></legend>
+    }
+    }*@
+
+
+
