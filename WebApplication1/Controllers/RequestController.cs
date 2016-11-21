@@ -28,7 +28,7 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
        [ResponseType(typeof(RequestModelWebAPI))]
-        public IHttpActionResult PostBook(RequestModelWebAPI model)
+        public IHttpActionResult PostRequest(RequestModelWebAPI model)
        {
             if (!ModelState.IsValid)
             {
