@@ -13,6 +13,7 @@ namespace WebApplication1.Controllers
     public class RequestController : ApiController
     {
         RequestModelContext db = new RequestModelContext();
+        RequestModelWebAPIContext dg = new RequestModelWebAPIContext();
         [HttpGet]
         public IHttpActionResult ReturnObject(int id)
         {
@@ -28,16 +29,17 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
        [ResponseType(typeof(RequestModelWebAPI))]
-        public IHttpActionResult PostRequest(RequestModelWebAPI model)
+        public IHttpActionResult PostRequest(RequestModelWebAPI model)//,byte[] Image)
        {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            //db.RequestModel.Add(model);
-           // db.SaveChanges();
-            return CreatedAtRoute("DefaultApi", new { id = model.Id }, model);
+            //RequestModel model2=new RequestModel();
+           // model2.Name = model.Email;
+            dg.RequestModelWebAPI.Add(model);
+            dg.SaveChanges();
+            return Ok(model);
         }
     }
 }
