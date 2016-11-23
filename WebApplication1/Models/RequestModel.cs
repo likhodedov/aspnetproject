@@ -8,7 +8,7 @@ namespace WebApplication1.Models
     public class RequestModel
     {
         public int Id { get; set; }
-        public string Name { get; set; } // название картинки
+        public string Email { get; set; } // название картинки
         public string Description { get; set; } // название картинки
         public byte[] Image { get; set; }
     }

@@ -38,7 +38,7 @@ namespace WebApplication1.Controllers
             return View();
         }
 
-        [Authorize(Roles = "admin")]
+       // [Authorize(Roles = "admin")]
         public ActionResult AdminPage()
         {
             ViewBag.Message = "Your contact page.";
@@ -47,7 +47,7 @@ namespace WebApplication1.Controllers
         }
 
         
-        [Authorize(Roles = "user")]
+       // [Authorize(Roles = "user")]
         public ActionResult UserPage()
         {
             ViewBag.Message = "Your contact page.";
