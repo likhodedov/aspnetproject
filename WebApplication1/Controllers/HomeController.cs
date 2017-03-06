@@ -41,9 +41,25 @@ namespace WebApplication1.Controllers
        // [Authorize(Roles = "admin")]
         public ActionResult AdminPage()
         {
-            ViewBag.Message = "Your contact page.";
+            var DataItems = db.RequestModel.ToList();
 
-            return View(db.RequestModel);
+            var ResItems = new List<TicketViewModel>();
+
+            foreach(var p in DataItems)
+            {
+                TicketViewModel el = new TicketViewModel();
+
+                el.description = p.Description;
+                el.email = p.Email;
+                el.id = p.Id;
+
+                el.PathForImg = Directory.EnumerateFiles("C:\\" + p.Source).ToList();
+                
+                ResItems.Add(el);
+            }
+            
+          return View(ResItems);
+         
         }
 
         
@@ -58,22 +74,22 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public ActionResult UserPage(RequestModel pic, HttpPostedFileBase uploadImage)
         {
-            if (ModelState.IsValid && uploadImage != null)
-            {
-                byte[] imageData = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(uploadImage.InputStream))
-                {
-                    imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
-                }
-                // установка массива байтов
-                pic.Image = imageData;
+            //if (ModelState.IsValid && uploadImage != null)
+            //{
+            //    byte[] imageData = null;
+            //    // считываем переданный файл в массив байтов
+            //    using (var binaryReader = new BinaryReader(uploadImage.InputStream))
+            //    {
+            //        imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
+            //    }
+            //    // установка массива байтов
+            //    pic.Image = imageData;
 
-                db.RequestModel.Add(pic);
-                db.SaveChanges();
+            //    db.RequestModel.Add(pic);
+            //    db.SaveChanges();
 
-                return RedirectToAction("Index");
-            }
+            //    return RedirectToAction("Index");
+            //}
             return View(pic);
         }
 

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using WebApplication1.Models;
 
 namespace WebApplication1.Models
 {
@@ -16,9 +17,19 @@ namespace WebApplication1.Models
             // Здесь добавьте утверждения пользователя
             return userIdentity;
         }
-    }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync2(UserManager<ApplicationUser> manager, string authenticationType)
+        {
+            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType 
+            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            // Add custom user claims here 
+            return userIdentity;
+        }
+    }
+    
+}
+
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -30,4 +41,3 @@ namespace WebApplication1.Models
             return new ApplicationDbContext();
         }
     }
-}

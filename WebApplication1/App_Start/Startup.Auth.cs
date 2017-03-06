@@ -6,11 +6,14 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using WebApplication1.Models;
+using Microsoft.Owin.Security.OAuth;
 
 namespace WebApplication1
 {
     public partial class Startup
     {
+        public static string PublicClientId { get; private set; }
+        public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
         // Дополнительные сведения о настройке проверки подлинности см. по адресу: http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
@@ -34,7 +37,7 @@ namespace WebApplication1
                         validateInterval: TimeSpan.FromMinutes(30),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
-            });            
+            });
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Позволяет приложению временно хранить информацию о пользователе, пока проверяется второй фактор двухфакторной проверки подлинности.
@@ -63,6 +66,20 @@ namespace WebApplication1
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+            PublicClientId = "self";
+            OAuthAuthorizationServerOptions OAuthOptions = new OAuthAuthorizationServerOptions
+            {
+                 TokenEndpointPath = new PathString("/Token"),
+                 Provider = new ApplicationOAuthProvider(PublicClientId),
+                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
+                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+                 // In production mode set AllowInsecureHttp = false 
+                 AllowInsecureHttp = true
+             };
+
+            // Enable the application to use bearer tokens to authenticate users
+            app.UseOAuthBearerTokens(OAuthOptions);
         }
+      
     }
 }
