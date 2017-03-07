@@ -15,16 +15,22 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Mvc;
 using WebApplication1.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Host.SystemWeb;
+
 
 namespace WebApplication1.Controllers
 {
-    
+
     public class RequestController : ApiController
     {
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
         RequestModelContext db = new RequestModelContext();
 
-       
-
+        public object Response { get; private set; }
 
         [System.Web.Http.HttpGet]
         public IHttpActionResult ReturnObject(int id)
@@ -127,10 +133,10 @@ namespace WebApplication1.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
-            
+
             String currentPath = "C:\\uploads\\" + email + "\\" + Guid.NewGuid().ToString() + "\\";
-               if (!Directory.Exists(currentPath))
-                    Directory.CreateDirectory(currentPath);
+            if (!Directory.Exists(currentPath))
+                Directory.CreateDirectory(currentPath);
 
             model.Email = email;
             model.Description = description;
@@ -138,34 +144,72 @@ namespace WebApplication1.Controllers
             db.RequestModel.Add(model);
             db.SaveChanges();
             //foreach (string file in httpRequest.Files)
-            for (int i=0;i<httpRequest.Files.Count;i++)
+            for (int i = 0; i < httpRequest.Files.Count; i++)
             {
                 var postedFile = httpRequest.Files[i];
-                var filePath =currentPath + postedFile.FileName;
+                var filePath = currentPath + postedFile.FileName;
                 postedFile.SaveAs(filePath);
             }
-            
-            
+
+
             return Request.CreateResponse(HttpStatusCode.Created);
         }
 
-       
+
         [System.Web.Http.ActionName("postTest")]
-        public string Post()
+        public async Task<string> Post()
         {
             var httpRequest = HttpContext.Current.Request;
-            //var x=httpRequest.
-            return "ss";
+            //string[] keys = httpRequest.Form.AllKeys;
+            //var value = "";
+            var name = httpRequest.Form["username"];
+            var passwd = httpRequest.Form["password"];
+
+            var user = new ApplicationUser { UserName = name, Email = name };
+            var result = await UserManager.CreateAsync(user, passwd);
+            if (result.Succeeded)
+            {
+                await UserManager.AddToRoleAsync(user.Id, "user");
+                return "Success";
+            }
+            else return "Error";
+
+
         }
 
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
 
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
-
+        
 
     }
 
-
 }
+    
+
+
+
 
 
 
