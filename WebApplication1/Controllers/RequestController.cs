@@ -19,7 +19,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Host.SystemWeb;
-
+using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Linq;
 
 namespace WebApplication1.Controllers
 {
@@ -29,6 +30,8 @@ namespace WebApplication1.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         RequestModelContext db = new RequestModelContext();
+        private readonly string _publicClientId;
+        private OAuthBearerAuthenticationProvider provider;
 
         public object Response { get; private set; }
 
@@ -170,10 +173,13 @@ namespace WebApplication1.Controllers
             if (result.Succeeded)
             {
                 await UserManager.AddToRoleAsync(user.Id, "user");
-                return "Success";
+                //return "Success";
+                var srt = GenerateLocalAccessTokenResponse("admin@mail.ru");
+                return srt;
             }
             else return "Error";
-
+        
+           // return GenerateLocalAccessTokenResponse(name);
 
         }
 
@@ -201,10 +207,38 @@ namespace WebApplication1.Controllers
             }
         }
 
-        
+        private string GenerateLocalAccessTokenResponse(string userName)
+        {
+
+            var tokenExpiration = TimeSpan.FromDays(1);
+
+            ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
+
+            identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+
+            var props = new AuthenticationProperties()
+            {
+                IssuedUtc = DateTime.UtcNow,
+                ExpiresUtc = DateTime.UtcNow.Add(tokenExpiration),
+            };
+
+            var ticket = new AuthenticationTicket(identity, props);
+
+            var accessToken = Startup.OAuthOptions.AccessTokenFormat.Protect(ticket);
+            string tokenResponse = "good";
+            //JObject tokenResponse = new JObject(
+                                     //   new JProperty("userName", userName),
+                                     //   new JProperty("access_token", accessToken),
+                                     //   new JProperty("token_type", "bearer"),
+                                     //   new JProperty("expires_in", tokenExpiration.TotalSeconds.ToString()),
+                                       // new JProperty(".issued", ticket.Properties.IssuedUtc.ToString()),
+                                       // new JProperty(".expires", ticket.Properties.ExpiresUtc.ToString())
+      //  );
+
+            return tokenResponse;
+        }
 
     }
-
 }
     
 
