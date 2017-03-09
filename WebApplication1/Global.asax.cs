@@ -8,6 +8,8 @@ using System.Web.Http;
 using System.Web.Optimization;
 using System.Web.Routing;
 using WebApplication1.Models;
+using System.Web.Helpers;
+using System.Security.Claims;
 
 namespace WebApplication1
 {
@@ -21,7 +23,7 @@ namespace WebApplication1
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            
+            AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
 
         }
     }
