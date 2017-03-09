@@ -22,6 +22,8 @@ using Microsoft.Owin.Host.SystemWeb;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using System.Web.Script.Serialization;
 
 namespace WebApplication1.Controllers
 {
@@ -190,15 +192,31 @@ namespace WebApplication1.Controllers
                     var tokenServiceResponse = await client.PostAsync(tokenServiceUrl, requestParamsFormUrlEncoded);
                     var responseString = await tokenServiceResponse.Content.ReadAsStringAsync();
                     var responseCode = tokenServiceResponse.StatusCode;
+
+                    dynamic d = JObject.Parse(responseString);
+                    var itemToAdd = new JObject();
+                    var usertemp = await UserManager.FindByNameAsync(name);
+
+
+                    itemToAdd["id"] = usertemp.Id; 
+                    d.Merge(itemToAdd);
+                    string json = d.ToString(Newtonsoft.Json.Formatting.None);
+
+
+
                     var responseMsg = new HttpResponseMessage(responseCode)
                     {
-                        Content = new StringContent(responseString, Encoding.UTF8, "application/json")
+                        Content = new StringContent(json, Encoding.UTF8, "application/json")
                     };
+                // var resulst = JsonConvert.DeserializeObject<ResponseInfo>(responseString);
+
+                   
+
                     return responseMsg;
                 }
                    // return AccessToken;
             }
-           else return Request.CreateResponse(HttpStatusCode.Forbidden, "blabalba"); ;
+           else return Request.CreateResponse(HttpStatusCode.Forbidden, "Error"); ;
         
            // return GenerateLocalAccessTokenResponse(name);
 
@@ -231,6 +249,18 @@ namespace WebApplication1.Controllers
     
 
     }
+    public class ResponseInfo
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public string expires_in { get; set; }
+        public string userName { get; set; }
+        public string issued { get; set; }
+        public string expires { get; set; }
+        public string id_user { get; set; }
+    }
+
+   
 }
     
 
