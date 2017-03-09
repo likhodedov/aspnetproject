@@ -110,18 +110,21 @@ namespace WebApplication1.Controllers
         //    }
 
         //    return Request.CreateResponse(HttpStatusCode.Created);
-        //}
+        //}s
         [System.Web.Http.Authorize]
-        public HttpResponseMessage Post(string email, string description)
+        public HttpResponseMessage RequestPost()
         {
+            var httpRequest = HttpContext.Current.Request;
+            var email = httpRequest.Form["email"];
+            var description = httpRequest.Form["description"];
             ClaimsIdentity claimsIdentity = User.Identity as ClaimsIdentity;
             RequestModel model = new RequestModel();
-            var httpRequest = HttpContext.Current.Request;
+         
             if (httpRequest.Files.Count < 1)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
-
+            
             String currentPath = "C:\\uploads\\" + email + "\\" + Guid.NewGuid().ToString() + "\\";
             if (!Directory.Exists(currentPath))
                 Directory.CreateDirectory(currentPath);
